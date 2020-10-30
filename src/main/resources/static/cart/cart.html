@@ -24,8 +24,18 @@
             <td></td>
             <td>Итоговая стоимость</td>
             <td>{{cart.price}}</td>
-            <td><a class="btn btn-submit" href="/checkout"></a></td>
         </tr>
+        <form ng-submit="createOrder()">
+        <tr>
+            <td>Оформление заказа:</td>
+            <td>
+                <input class="text-input" placeholder="Введите адрес доставки" ng-model="Order.address">
+            </td>
+            <td hidden="true"><label ng-model="Order.userId">{{currentUser.id}}</label></td>
+            <td><label ng-model="Order.userName">{{currentUser.username}}</label></td>
+            <td><label ng-model="Order.price">{{cart.price}}</label></td>
+            <td><button class="btn btn-warning" type="submit">Оформить</button></td>
+        </tr></form>
         </tbody>
     </table>
 </div>

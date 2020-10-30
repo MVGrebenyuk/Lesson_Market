@@ -1,30 +1,28 @@
 package com.geekbrains.geek.market.controllers;
 
 import com.geekbrains.geek.market.dto.CartDto;
-import com.geekbrains.geek.market.dto.OrderItemDto;
-import com.geekbrains.geek.market.entities.Product;
-import com.geekbrains.geek.market.exceptions.ResourceNotFoundException;
-import com.geekbrains.geek.market.services.ProductService;
+import com.geekbrains.geek.market.entities.Order;
+import com.geekbrains.geek.market.services.OrderService;
+import com.geekbrains.geek.market.services.UserService;
 import com.geekbrains.geek.market.utils.Cart;
+import com.geekbrains.geek.market.utils.CurrentUser;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("api/v1/cart")
 @AllArgsConstructor
 public class CartController {
     private Cart cart;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/add/{product_id}")
     public void addToCart(@PathVariable(name = "product_id") Long productId) {
@@ -41,9 +39,23 @@ public class CartController {
         cart.remove(productId);
     }
 
-    @GetMapping
+    @GetMapping("/allProducts")
     public CartDto getCartDto() {
         cart.recalculate();
         return new CartDto(cart);
+    }
+
+    @GetMapping
+    public CurrentUser getForFrontUser(Principal principal){
+        CurrentUser user = new CurrentUser();
+        user.setUsername(principal.getName());
+        user.setId(userService.findByUsername(principal.getName()).getId());
+        return user;
+    }
+
+    @PostMapping
+    public void checkout(@RequestBody Order order){
+        orderService.save(order);
+        System.out.println("Добавлен новый заказ");
     }
 }
