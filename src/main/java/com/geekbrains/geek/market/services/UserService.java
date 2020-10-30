@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+
+    User user = null;
+
     private final UserRepository userRepository;
 
     public User findByUsername(String username) {

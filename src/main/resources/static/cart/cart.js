@@ -3,12 +3,33 @@ angular.module('app').controller('cartController', function ($scope, $http) {
 
     $scope.cartContentRequest = function () {
         $http({
-            url: contextPath + '/api/v1/cart',
+            url: contextPath + '/api/v1/cart/allProducts',
             method: 'GET'
         })
             .then(function (response) {
                 console.log(response.data);
                 $scope.cart = response.data;
+            });
+    };
+
+    $scope.createOrder = function () {
+        $http.post(contextPath + '/api/v1/cart', $scope.Order)
+            .then(function (response) {
+                $scope.cart = null;
+                $scope.Order = null;
+                alert('Заказ создан');
+            });
+    };
+
+    $scope.getCurrentUser = function () {
+        $http({
+            url: contextPath + '/api/v1/cart',
+            method: 'GET'
+        })
+            .then(function (response) {
+                console.log("currentuser upload");
+                console.log(response.data);
+                $scope.currentUser = response.data;
             });
     };
 
@@ -43,4 +64,5 @@ angular.module('app').controller('cartController', function ($scope, $http) {
     };
 
     $scope.cartContentRequest();
+    $scope.getCurrentUser();
 });
